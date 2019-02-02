@@ -1,6 +1,8 @@
 /target/
 !.mvn/wrapper/maven-wrapper.jar
 src/main/resources/application-local.yml
+mvnw
+mvnw.cmd
 
 ### STS ###
 .apt_generated
