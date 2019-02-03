@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить задание</title>
+</head>
+<body>
+<form method="post" th:action="@{/assignment/add}" enctype="multipart/form-data">
+    <div><label> Название работы : <input type="text" name="name"/> </label></div>
+    <div><label> Количество баллов : <input type="number" name="maxScore"/> </label></div>
+    <div><label> Начало действия : <input type="datetime-local" name="starts"> </label></div>
+    <div><label> Конец действия : <input type="datetime-local" name="finishes"> </label></div>
+    <div><label> Файл работы: <input type="file" name="file"/></label></div>
+    <div><input type="submit" value="Создать"/></div>
+</form>
+</body>
+</html>

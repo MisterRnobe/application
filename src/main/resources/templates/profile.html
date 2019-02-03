@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль</title>
+</head>
+<body>
+
+Привет, <p th:text="${name}"></p>. Вы в группе <p th:text="${groupName}"></p>
+<div th:if="${role} == 'ADMIN'">
+    <div>
+        <a href="/assignment/add">Управление работами</a>
+    </div>
+    <div>
+        <a href="/users">Управление пользователями</a>
+    </div>
+</div>
+</body>
+</html>
