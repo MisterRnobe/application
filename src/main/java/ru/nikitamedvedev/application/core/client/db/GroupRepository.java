@@ -4,10 +4,10 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import ru.nikitamedvedev.application.core.client.db.dto.GroupDb;
 
-import java.util.Optional;
+import java.util.List;
 
 @Repository
 public interface GroupRepository extends CrudRepository<GroupDb, Long> {
 
-    Optional<GroupDb> findByName(String name);
+    List<GroupDb> findByNameIn(List<String> names);
 }

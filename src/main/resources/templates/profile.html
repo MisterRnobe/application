@@ -7,13 +7,20 @@
 </head>
 <body>
 
-Привет, <p th:text="${name}"></p>. Вы в группе <p th:text="${groupName}"></p>
+<h3>
+    Привет, <a th:text="${name}" th:remove="tag"></a>. Вы в группе <a th:text="${groupName}" th:remove="tag"></a>
+</h3>
 <div th:if="${role} == 'ADMIN'">
     <div>
-        <a href="/assignment/add">Управление работами</a>
+        <a href="/assignment">Управление работами</a>
     </div>
     <div>
         <a href="/users">Управление пользователями</a>
+    </div>
+</div>
+<div th:if="${role} == 'USER'">
+    <div>
+        <a href="/templates/work/info">Информация о работах и результатах</a>
     </div>
 </div>
 </body>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Информация о работах</title>
+</head>
+<body>
+<h3>Информация о работах</h3>
+<th:block th:each="result: ${results}">
+    <div>
+        <p>Название <a th:text="${result.name}" th:remove="tag"></a></p>
+        <p>Начало <a th:text="${result.starts.toString()}" th:remove="tag"></a></p>
+        <p>Конец <a th:text="${result.finishes.toString()}" th:remove="tag"></a></p>
+        <p>Максимальное число баллов  <a th:text="${result.maxScores}" th:remove="tag"></a></p>
+        <p th:if="${result.isCompleted}">Результат <a th:remove="tag" th:text="${result.earnedScores}"></a> </p>
+        <p th:unless="${result.isCompleted}">Работа не сдана!</p>
+    </div>
+</th:block>
+
+</body>
+</html>

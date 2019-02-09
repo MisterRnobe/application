@@ -8,6 +8,7 @@ import ru.nikitamedvedev.application.core.client.db.converter.LocalDateTimeConve
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -25,6 +26,14 @@ public class AssignmentDb {
     private LocalDateTime finishes;
     private Integer maxScores;
     private String name;
+    @Column(columnDefinition = "varbinary(max)")
     private byte[] source;
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(
+            name = "assignment_class",
+            joinColumns = {@JoinColumn(name = "assignment_id")},
+            inverseJoinColumns = {@JoinColumn(name = "class_id")}
+    )
+    private List<GroupDb> groups;
 
 }

@@ -11,6 +11,15 @@
     <div><label> Количество баллов : <input type="number" name="maxScore"/> </label></div>
     <div><label> Начало действия : <input type="datetime-local" name="starts"> </label></div>
     <div><label> Конец действия : <input type="datetime-local" name="finishes"> </label></div>
+    <div><label> Активировать для: </label>
+        <th:block th:each="group: ${groups}">
+            <div>
+                <input type="checkbox" name="groups" th:attr="value=${group}"/>
+                <label th:text="${group}" th:attr="for=${group}">
+                </label>
+            </div>
+        </th:block>
+    </div>
     <div><label> Файл работы: <input type="file" name="file"/></label></div>
     <div><input type="submit" value="Создать"/></div>
 </form>
