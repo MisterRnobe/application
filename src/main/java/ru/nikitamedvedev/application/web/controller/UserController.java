@@ -3,6 +3,10 @@ package ru.nikitamedvedev.application.web.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +18,8 @@ import ru.nikitamedvedev.application.core.service.Account;
 import ru.nikitamedvedev.application.core.service.UserService;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,17 +51,21 @@ public class UserController {
     }
 
     @PostMapping(path = "/add")
-    public void addUsers(@RequestParam("userList") MultipartFile file,
-                         @RequestParam("groupName") String groupName,
-                         HttpServletResponse response) throws IOException {
+    public ResponseEntity<Resource> addUsers(@RequestParam("userList") MultipartFile file,
+                                             @RequestParam("groupName") String groupName) throws IOException {
+        // TODO: 09.02.2019 Move to UserService class
         List<Object> parsed = objectMapper.readValue(file.getBytes(), ArrayList.class);
         List<String> names = parsed.stream()
                 .map(Object::toString)
                 .collect(Collectors.toList());
         List<Account> users = userService.createGroupWithUsers(groupName, names);
 
-        objectMapper.writeValue(response.getOutputStream(), users);
-        response.flushBuffer();
+        ByteArrayOutputStream stub = new ByteArrayOutputStream();
+        objectMapper.writeValue(stub, users);
+        Resource resource = new ByteArrayResource(stub.toByteArray());
+
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"" + groupName + ".json\"").body(resource);
     }
 }
 

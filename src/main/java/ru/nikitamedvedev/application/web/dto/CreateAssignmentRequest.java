@@ -19,4 +19,6 @@ public class CreateAssignmentRequest {
     private LocalDateTime starts;
     private LocalDateTime finishes;
     private List<String> groups;
+    private byte[] source;
+    private String fileName;
 }

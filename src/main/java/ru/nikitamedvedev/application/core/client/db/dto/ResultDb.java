@@ -1,12 +1,18 @@
 package ru.nikitamedvedev.application.core.client.db.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Data
 @Entity
 @Table(name = "result")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class ResultDb {
 
     @Id
@@ -17,6 +23,10 @@ public class ResultDb {
     private UserDb user;
     @ManyToOne
     @JoinColumn(name = "assignment_id")
-    private AssignmentDb assignmentDb;
-    private Long result;
+    private AssignmentDb assignment;
+    private Integer result;
+    private ResultStatus status;
+    @Column(columnDefinition = "varbinary(max)")
+    private byte[] source;
+    private String fileName;
 }

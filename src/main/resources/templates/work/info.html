@@ -4,17 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <title>Информация о работах</title>
+    <script src="../../../../../../../Загрузки/script.js"></script>
 </head>
 <body>
 <h3>Информация о работах</h3>
 <th:block th:each="result: ${results}">
-    <div>
-        <p>Название <a th:text="${result.name}" th:remove="tag"></a></p>
-        <p>Начало <a th:text="${result.starts.toString()}" th:remove="tag"></a></p>
-        <p>Конец <a th:text="${result.finishes.toString()}" th:remove="tag"></a></p>
-        <p>Максимальное число баллов  <a th:text="${result.maxScores}" th:remove="tag"></a></p>
-        <p th:if="${result.isCompleted}">Результат <a th:remove="tag" th:text="${result.earnedScores}"></a> </p>
-        <p th:unless="${result.isCompleted}">Работа не сдана!</p>
+    <div style="border-bottom: black 1px dashed">
+        <p>Название: <a th:text="${result.name}" th:remove="tag"></a></p>
+        <p>Начало: <a th:text="${result.starts.toString()}" th:remove="tag"></a></p>
+        <p>Конец: <a th:text="${result.finishes.toString()}" th:remove="tag"></a></p>
+        <p>Максимальное число баллов: <a th:text="${result.maxScores}" th:remove="tag"></a></p>
+        <p th:text="'Статус: '+${result.resultStatus.getDescription()}"></p>
+        <a th:href="@{'~/work/'+${result.assignmentId}}">Скачать задание</a>
+        <form method="post" enctype="multipart/form-data" th:action="@{'~/work/upload/'+${result.assignmentId}}" th:if="${result.resultStatus == T(ru.nikitamedvedev.application.core.client.db.dto.ResultStatus).NOT_UPLOADED}">
+            <div><label>Работа: <input type="file" name="file"/></label></div>
+            <div><input type="submit" value="Отправить"/></div>
+        </form>
     </div>
 </th:block>
 

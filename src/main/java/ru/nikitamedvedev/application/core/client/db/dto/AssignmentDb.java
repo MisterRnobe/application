@@ -28,6 +28,7 @@ public class AssignmentDb {
     private String name;
     @Column(columnDefinition = "varbinary(max)")
     private byte[] source;
+    private String fileName;
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name = "assignment_class",

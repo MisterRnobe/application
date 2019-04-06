@@ -12,7 +12,7 @@ import ru.nikitamedvedev.application.core.hepler.PasswordGenerator;
 public class MvcConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("index");
+        registry.addRedirectViewController("/", "/profile");
     }
 
     @Bean

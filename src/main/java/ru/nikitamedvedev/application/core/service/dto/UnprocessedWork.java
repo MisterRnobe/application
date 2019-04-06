@@ -3,20 +3,22 @@ package ru.nikitamedvedev.application.core.service.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.nikitamedvedev.application.core.client.db.dto.ResultStatus;
-
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class AssignmentResult {
+public class UnprocessedWork {
 
+    private Long resultId;
+    private Long userId;
     private Long assignmentId;
-    private LocalDateTime starts;
-    private LocalDateTime finishes;
-    private Integer maxScores;
-    private String name;
-    private Integer earnedScores;
-    private ResultStatus resultStatus;
+
+    private String userName;
+    private String groupName;
+    private ResultStatus status;
+
 }
+

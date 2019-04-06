@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface UserRepository extends CrudRepository<UserDb, Long> {
 
     Optional<UserDb> findByLogin(String login);
+    List<UserDb> findByGroupDb_Id(Long groupId);
 }
