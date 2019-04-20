@@ -11,6 +11,7 @@ import ru.nikitamedvedev.application.core.client.db.GroupRepository;
 import ru.nikitamedvedev.application.core.client.db.ResultRepository;
 import ru.nikitamedvedev.application.core.client.db.UserRepository;
 import ru.nikitamedvedev.application.core.client.db.dto.*;
+import ru.nikitamedvedev.application.core.service.dto.Assignment;
 import ru.nikitamedvedev.application.core.service.dto.AssignmentResult;
 import ru.nikitamedvedev.application.core.service.dto.UnprocessedWork;
 import ru.nikitamedvedev.application.core.user.User;
@@ -18,11 +19,14 @@ import ru.nikitamedvedev.application.web.dto.CreateAssignmentRequest;
 import ru.nikitamedvedev.application.web.model.FileResource;
 
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @Slf4j
@@ -34,15 +38,11 @@ public class AssignmentService {
     private final UserRepository userRepository;
     private final ResultRepository resultRepository;
 
-    public void storeAssignment(CreateAssignmentRequest request) {
+    public void createAssignment(String name, String fileName, byte[] file) {
         AssignmentDb assignmentDb = AssignmentDb.builder()
-                .name(request.getName())
-                .maxScores(request.getMaxScore())
-                .starts(request.getStarts())
-                .finishes(request.getFinishes())
-                .source(request.getSource())
-                .fileName(request.getFileName())
-                .groups(groupRepository.findByNameIn(request.getGroups()))
+                .name(name)
+                .fileName(fileName)
+                .file(file)
                 .build();
         assignmentRepository.save(assignmentDb);
     }
@@ -74,7 +74,7 @@ public class AssignmentService {
                             assignmentResult.setResultStatus(resultDb.getStatus());
                         }
                 )
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public void saveNewResult(Long id, String login, MultipartFile file) throws IOException {
@@ -112,7 +112,7 @@ public class AssignmentService {
                                         .userName(userDb.getName())
                                         .assignmentId(resultDb.getAssignment().getId())
                                         .build()))
-                .collect(Collectors.toList());
+                .collect(toList());
 
 
     }
@@ -124,12 +124,34 @@ public class AssignmentService {
                         .fullName(userDb.getName())
                         .groupName(userDb.getGroupDb().getName())
                         .build())
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public FileResource getResultResource(Long id) {
         ResultDb resultDb = resultRepository.findById(id).orElseThrow(() -> new RuntimeException("Assignment has not found!"));
         Resource resource = new ByteArrayResource(resultDb.getSource());
         return new FileResource(resource, resultDb.getFileName());
+    }
+
+    public List<Assignment> getAssignmentByIds(List<Long> assignmentId) {
+        return null;
+//        return convertFromDbObject(
+//                assignmentRepository.findById(assignmentId.get(0)).orElseThrow(() -> new RuntimeException(String.format("Assignment %s was not found!", assignmentId)))
+//        );
+    }
+
+    private Assignment convertFromDbObject(AssignmentDb assignmentDb) {
+        return Assignment.builder()
+                .name(assignmentDb.getName())
+                .maxScore(assignmentDb.getMaxScores())
+                .starts(assignmentDb.getStarts())
+                .finishes(assignmentDb.getFinishes())
+                .fileId(assignmentDb.getFileId())
+                .groups(assignmentDb.getGroups().stream().map(GroupDb::getName).collect(toList()))
+                .build();
+    }
+
+    public void bindAssignment(Long id, List<String> boundGroups, OffsetDateTime startTime, OffsetDateTime endTime) {
+
     }
 }

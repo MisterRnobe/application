@@ -18,7 +18,6 @@ import ru.nikitamedvedev.application.web.model.FileResource;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @Slf4j

@@ -1,4 +1,4 @@
-package ru.nikitamedvedev.application.web.dto;
+package ru.nikitamedvedev.application.core.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,15 +8,18 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class CreateAssignmentRequest {
+@AllArgsConstructor
+public class Assignment {
 
     private String name;
     private Integer maxScore;
+    private LocalDateTime starts;
+    private LocalDateTime finishes;
     private List<String> groups;
     private Long fileId;
-    private String fileName;
+
 }
