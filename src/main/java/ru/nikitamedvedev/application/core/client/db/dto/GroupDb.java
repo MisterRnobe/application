@@ -13,6 +13,6 @@ public class GroupDb {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @ManyToMany(mappedBy = "groups")
-    private List<AssignmentDb> assignments;
+//    @ManyToMany(mappedBy = "groups")
+//    private List<AssignmentDb> assignments;
 }

@@ -1,14 +1,13 @@
 package ru.nikitamedvedev.application.core.client.db.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Data
+@EqualsAndHashCode(exclude = "id")
 @Table(name = "assignment")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,20 +17,11 @@ public class AssignmentDb {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     //    @Convert(converter = LocalDateTimeConverter.class)
-//    private LocalDateTime starts;
-//    @Convert(converter = LocalDateTimeConverter.class)
 //    private LocalDateTime finishes;
     private String name;
-    private String fileName;
-    private byte[] file;
-//    @Column(columnDefinition = "varbinary(max)")
-//    @OneToOne(cascade = {CascadeType.ALL})
-//    @ManyToMany(cascade = {CascadeType.ALL})
-//    @JoinTable(
-//            name = "assignment_class",
-//            joinColumns = {@JoinColumn(name = "assignment_id")},
-//            inverseJoinColumns = {@JoinColumn(name = "class_id")}
-//    )
-//    private List<GroupDb> groups;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    private FileDb file;
+    @ManyToOne
+    private UserDb posted;
 }

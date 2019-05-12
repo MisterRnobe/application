@@ -11,7 +11,4 @@ import java.util.Optional;
 @Repository
 public interface ResultRepository extends CrudRepository<ResultDb, Long> {
 
-    Optional<ResultDb> findByAssignmentId(Long assignmentId);
-    List<ResultDb> findByUser_IdAndStatus(Long userId, ResultStatus status);
-    List<ResultDb> findByUser_IdInAndStatus(List<Long> userIds, ResultStatus status);
 }

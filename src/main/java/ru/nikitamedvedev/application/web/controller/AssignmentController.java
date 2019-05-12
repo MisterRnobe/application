@@ -3,14 +3,15 @@ package ru.nikitamedvedev.application.web.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.nikitamedvedev.application.core.service.AssignmentService;
 import ru.nikitamedvedev.application.core.service.dto.Assignment;
-import ru.nikitamedvedev.application.web.dto.BindAssignmentRequest;
-import ru.nikitamedvedev.application.web.dto.BoundAssignmentResponse;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -22,69 +23,51 @@ public class AssignmentController {
     private final AssignmentService assignmentService;
 
     @SneakyThrows
-    @PutMapping(path = "/add")
-    public void addAssignment(@RequestParam("file") MultipartFile file,
-                              @RequestParam("name") String name) {
-        log.info("Received add assignment response: {}", name);
-        file.getBytes();
-        assignmentService.createAssignment(name, file.getName(), file.getBytes());
+    @PostMapping(path = "/create")
+    public void createAssignment(@RequestParam("file") MultipartFile file,
+                                 @RequestParam("name") String name,
+                                 @RequestParam("postedBy") String postedBy) {
+        log.info("Received add assignment response: {} with filename {} by {}", name, file.getOriginalFilename(), postedBy);
+        assignmentService.createAssignment(name, file.getOriginalFilename(), file.getBytes(), postedBy);
         log.info("Assignment stored processed");
     }
 
-    @PostMapping(path = "/get-by-ids")
-    public List<Assignment> getAssignmentsByIds(@RequestBody List<Long> ids) {
-        log.info("Received get assignment by id request: {}", ids);
-        List<Assignment> assignments = assignmentService.getAssignmentByIds(ids);
+    @GetMapping(path = "/get-by-creator/{login}")
+    public List<Assignment> getAllBelongingTo(@PathVariable String login) {
+        log.info("Received get assignment by creator request: {}", login);
+        val assignments = assignmentService.getAssignmentsByCreator(login);
         log.info("Found assignment. Returning...");
         return assignments;
     }
 
-    @PostMapping("/bind/{id}")
-    public void bindAssignment(@PathVariable Long id, @RequestBody BindAssignmentRequest request) {
-        log.info("Received bound request");
-        assignmentService.bindAssignment(id, request.getBoundGroups(), request.getStartTime(), request.getEndTime());
-        log.info("Bound request has been processed");
+    @PostMapping(path = "/modify/{id}")
+    public void updateAssignment(@RequestParam(value = "file", required = false) MultipartFile file,
+                                 @RequestParam(value = "name", required = false) String name,
+                                 @PathVariable Long id) {
+        log.info("Updating assignment: {}", id);
+        val fileName = Optional.ofNullable(file)
+                .map(MultipartFile::getOriginalFilename)
+                .orElse(null);
+        val fileContent = Optional.ofNullable(file)
+                .map(f -> {
+                    byte[] bytes = null;
+                    try {
+                        bytes = f.getBytes();
+                    } catch (IOException e) {
+                        log.error("Error occurred when reading file...", e);
+                    }
+                    return bytes;
+                })
+                .orElse(null);
+
+        assignmentService.updateAssignment(id, name, fileName, fileContent);
+        log.info("Assignment updated");
     }
 
-    @PostMapping(path = "/get-all-by-groups")
-    public List<BoundAssignmentResponse> getAllByGroups(@RequestBody List<String> groupNames) {
-        log.info("Received get all by groups response: {}", groupNames);
-        assignmentService
+    @DeleteMapping(path = "/delete/{id}")
+    public void deleteAssignment(@PathVariable Long id) {
+        log.info("Deleting assignment: {}", id);
+        assignmentService.deleteAssignment(id);
+        log.info("Assignment removed");
     }
-
-//
-//    @GetMapping(path = "/new_works")
-//    public String getNewWorks(Model model) {
-//        model.addAttribute("groups", assignmentService.getGroups());
-//        return "assignment/new_work";
-//    }
-//
-//    @GetMapping(path = "/result/{id}")
-//    public ResponseEntity<Resource> getResult(@PathVariable Long id) {
-//        FileResource resultResource = assignmentService.getResultResource(id);
-//        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-//                "attachment; filename=\"" + resultResource.getFileName() + "\"")
-//                .body(resultResource.getResource());
-//
-//
-//    }
-//
-//    @PostMapping(path = "/new_works")
-//    public String getNewWorks(@RequestParam Long groupId,
-//                              @RequestParam(required = false) Long userId,
-//                              Model model) {
-//
-//        List<UnprocessedWork> newWorks = assignmentService.getNewWorks(groupId, userId);
-//        Map<Long, String> availableGroups = assignmentService.getGroups();
-//        List<User> availableUsers = assignmentService.getUsersInGroup(groupId);
-//
-//        model.addAttribute("selectedGroup", availableGroups.get(groupId));
-//
-//        model.addAttribute("groups", availableGroups);
-//        model.addAttribute("users", availableUsers);
-//        model.addAttribute("newWorks", newWorks);
-//
-//        return "assignment/new_work";
-//    }
-
 }

@@ -1,20 +1,16 @@
 package ru.nikitamedvedev.application.core.service.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Assignment {
+public class User {
 
-    private Long assignmentId;
+    private String login;
     private String name;
-    private Long fileId;
-    private User createdBy;
+    private Group group;
 
 }

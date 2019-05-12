@@ -7,7 +7,6 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,8 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.nikitamedvedev.application.core.service.Account;
 import ru.nikitamedvedev.application.core.service.UserService;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +26,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
-@PreAuthorize("hasAuthority('ADMIN')")
 public class UserController {
 
     private final ObjectMapper objectMapper;
