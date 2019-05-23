@@ -163,7 +163,6 @@ public class AssignmentControllerTest extends Helper {
 
         mockMvc.perform(
                 delete("/assignment/delete/" + assignmentId)
-
         ).andDo(
                 print()
         ).andExpect(
@@ -175,7 +174,7 @@ public class AssignmentControllerTest extends Helper {
 
     @Test
     @SneakyThrows
-    public void shouldNotRemoveIfBindingsExist() {
+    public void shouldRemoveEvenIfBindingsExist() {
         // TODO: 12.05.2019 Implement
         fail();
     }

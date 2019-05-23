@@ -17,7 +17,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping(path = "/assignment")
 @RequiredArgsConstructor
-//@PreAuthorize("hasAuthority('ADMIN')")
 public class AssignmentController {
 
     private final AssignmentService assignmentService;
