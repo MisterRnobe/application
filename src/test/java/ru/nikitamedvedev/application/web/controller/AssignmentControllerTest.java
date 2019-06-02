@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.nikitamedvedev.application.Helper;
-import ru.nikitamedvedev.application.core.client.db.dto.AssignmentDb;
+import ru.nikitamedvedev.application.persistence.dto.AssignmentDb;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;

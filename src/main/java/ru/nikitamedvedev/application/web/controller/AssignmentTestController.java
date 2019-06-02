@@ -3,8 +3,8 @@ package ru.nikitamedvedev.application.web.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.nikitamedvedev.application.core.service.AssignmentTestService;
-import ru.nikitamedvedev.application.core.service.dto.AssignmentTest;
+import ru.nikitamedvedev.application.service.AssignmentTestService;
+import ru.nikitamedvedev.application.service.dto.AssignmentTest;
 import ru.nikitamedvedev.application.web.dto.CreateAssignmentTestRequest;
 
 import java.util.List;

@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.nikitamedvedev.application.core.service.AssignmentService;
-import ru.nikitamedvedev.application.core.service.dto.Assignment;
+import ru.nikitamedvedev.application.service.AssignmentService;
+import ru.nikitamedvedev.application.service.dto.Assignment;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,12 +22,12 @@ public class AssignmentController {
     private final AssignmentService assignmentService;
 
     @SneakyThrows
-    @PostMapping(path = "/create")
+    @PostMapping(path = "/create/{login}")
     public void createAssignment(@RequestParam("file") MultipartFile file,
                                  @RequestParam("name") String name,
-                                 @RequestParam("postedBy") String postedBy) {
-        log.info("Received add assignment response: {} with filename {} by {}", name, file.getOriginalFilename(), postedBy);
-        assignmentService.createAssignment(name, file.getOriginalFilename(), file.getBytes(), postedBy);
+                                 @PathVariable String login) {
+        log.info("Received add assignment response: {} with filename {} by {}", name, file.getOriginalFilename(), login);
+        assignmentService.createAssignment(name, file.getOriginalFilename(), file.getBytes(), login);
         log.info("Assignment stored processed");
     }
 

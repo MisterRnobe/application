@@ -8,9 +8,9 @@ import org.junit.runner.RunWith;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.nikitamedvedev.application.Helper;
-import ru.nikitamedvedev.application.core.client.db.dto.AssignmentTestDb;
-import ru.nikitamedvedev.application.core.client.db.dto.QuestionDb;
-import ru.nikitamedvedev.application.core.client.db.dto.UserDb;
+import ru.nikitamedvedev.application.persistence.dto.AssignmentTestDb;
+import ru.nikitamedvedev.application.persistence.dto.QuestionDb;
+import ru.nikitamedvedev.application.persistence.dto.TeacherUserDb;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -83,7 +83,7 @@ public class AssignmentTestControllerTest extends Helper {
 
         assertEquals(assignmentDbs.size(), 1);
         assertEquals("test assignment", assignmentTestDb.getName());
-        assertEquals(UserDb.builder().login(SOME_LOGIN).name(SOME_LOGIN).build(), assignmentTestDb.getCreatedBy());
+        assertEquals(TeacherUserDb.builder().login(SOME_LOGIN).name(SOME_LOGIN).build(), assignmentTestDb.getCreatedBy());
         assertEquals(Arrays.asList(
                 new QuestionDb(null, "question 1", Arrays.asList("bad answer 1", "bad answer 2"), Arrays.asList("good answer 1", "good answer 2"), 4),
                 new QuestionDb(null, "question 2", Arrays.asList("bad answer 3", "bad answer 4", "bad answer 5"), Arrays.asList("good answer 3"), 3)
@@ -184,7 +184,7 @@ public class AssignmentTestControllerTest extends Helper {
         val actual = assignmentTestRepository.findById(assignmentId).get();
 
         assertEquals("test assignment 2", actual.getName());
-        assertEquals(UserDb.builder().login(SOME_LOGIN).name(SOME_LOGIN).build(), actual.getCreatedBy());
+        assertEquals(TeacherUserDb.builder().login(SOME_LOGIN).name(SOME_LOGIN).build(), actual.getCreatedBy());
         assertEquals(Collections.singletonList(
                 new QuestionDb(null, "question 3", Arrays.asList("bad answer 7", "bad answer 8", "bad answer 9"), Collections.singletonList("good answer 0"), 2)
         ), actual.getQuestions());

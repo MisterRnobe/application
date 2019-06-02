@@ -1,14 +1,23 @@
 package ru.nikitamedvedev.application;
 
+import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.nikitamedvedev.application.core.client.db.AssignmentRepository;
-import ru.nikitamedvedev.application.core.client.db.AssignmentTestRepository;
-import ru.nikitamedvedev.application.core.client.db.UserRepository;
-import ru.nikitamedvedev.application.core.client.db.dto.UserDb;
+import ru.nikitamedvedev.application.persistence.AssignmentRepository;
+import ru.nikitamedvedev.application.persistence.AssignmentTestRepository;
+import ru.nikitamedvedev.application.persistence.GroupRepository;
+import ru.nikitamedvedev.application.persistence.TeacherUserRepository;
+import ru.nikitamedvedev.application.persistence.dto.AssignmentDb;
+import ru.nikitamedvedev.application.persistence.dto.FileDb;
+import ru.nikitamedvedev.application.persistence.dto.GroupDb;
+import ru.nikitamedvedev.application.persistence.dto.TeacherUserDb;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -18,25 +27,64 @@ public class Helper {
     protected MockMvc mockMvc;
 
     protected static final String SOME_LOGIN = "some_login";
+    protected static final String SOME_GROUP = "some_group";
+    protected static final String ASSIGNMENT1 = "assignment1";
 
     @Autowired
     protected AssignmentRepository assignmentRepository;
     @Autowired
-    protected UserRepository userRepository;
+    protected TeacherUserRepository teacherUserRepository;
+    @Autowired
+    protected GroupRepository groupRepository;
     @Autowired
     protected AssignmentTestRepository assignmentTestRepository;
 
     protected void purgeDatabase() {
         assignmentRepository.deleteAll();
         assignmentTestRepository.deleteAll();
-        userRepository.deleteAll();
+        teacherUserRepository.deleteAll();
+
+        groupRepository.deleteAll();
     }
 
     protected void addUserWithoutGroup(String login) {
-        val userDb = UserDb.builder()
+        val userDb = TeacherUserDb.builder()
                 .login(login)
                 .name(login)
                 .build();
-        userRepository.save(userDb);
+        teacherUserRepository.save(userDb);
+    }
+
+    protected Long addGroup(String group) {
+        return groupRepository.save(new GroupDb(null, group, null)).getId();
+    }
+
+    protected Long addAssignment(String name) {
+        val assignmentDb = AssignmentDb.builder()
+                .name(name)
+                .posted(teacherUserRepository.findById(SOME_LOGIN).get())
+                .file(new FileDb(null, "file.txt", "blah-blah".getBytes()))
+                .build();
+        return assignmentRepository.save(assignmentDb).getId();
+    }
+
+    @SneakyThrows
+    protected void bindAssignmentToGroup(Long assignmentId, Long groupId, String starts, String finishes, Integer maxScores) {
+        mockMvc.perform(
+                put("/binding/create")
+                        //language=JSON
+                        .content("{\n" +
+                                "  \"assignmentId\": " + assignmentId + ",\n" +
+                                "  \"groupId\": " + groupId + ",\n" +
+                                "  \"starts\": \"" + starts + "\",\n" +
+                                "  \"finishes\": \"" + finishes + "\",\n" +
+                                "  \"maxScores\": \"" + maxScores + "\"\n" +
+                                "}")
+
+        ).andDo(
+                print()
+        ).andExpect(
+                status().isOk()
+        );
     }
 }

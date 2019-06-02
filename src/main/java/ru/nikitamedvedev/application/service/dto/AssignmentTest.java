@@ -1,18 +1,19 @@
-package ru.nikitamedvedev.application.web.dto;
+package ru.nikitamedvedev.application.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.nikitamedvedev.application.service.dto.Question;
 
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateAssignmentTestRequest {
+public class AssignmentTest {
 
+    private Long assignmentId;
     private String name;
     private List<Question> questions;
+    private TeacherUser createdBy;
 
 }

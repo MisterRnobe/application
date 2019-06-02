@@ -16,7 +16,7 @@
         <p>Максимальное число баллов: <a th:text="${result.maxScores}" th:remove="tag"></a></p>
         <p th:text="'Статус: '+${result.resultStatus.getDescription()}"></p>
         <a th:href="@{'~/work/'+${result.assignmentId}}">Скачать задание</a>
-        <form method="post" enctype="multipart/form-data" th:action="@{'~/work/upload/'+${result.assignmentId}}" th:if="${result.resultStatus == T(ru.nikitamedvedev.application.core.client.db.dto.ResultStatus).NOT_UPLOADED}">
+        <form method="post" enctype="multipart/form-data" th:action="@{'~/work/upload/'+${result.assignmentId}}" th:if="${result.resultStatus == T(ru.nikitamedvedev.application.core.client.persistence.dto.ResultStatus).NOT_UPLOADED}">
             <div><label>Работа: <input type="file" name="file"/></label></div>
             <div><input type="submit" value="Отправить"/></div>
         </form>
