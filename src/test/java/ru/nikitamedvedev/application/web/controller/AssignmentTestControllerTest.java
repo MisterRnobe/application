@@ -85,8 +85,8 @@ public class AssignmentTestControllerTest extends Helper {
         assertEquals("test assignment", assignmentTestDb.getName());
         assertEquals(TeacherUserDb.builder().login(SOME_LOGIN).name(SOME_LOGIN).build(), assignmentTestDb.getCreatedBy());
         assertEquals(Arrays.asList(
-                new QuestionDb(null, "question 1", Arrays.asList("bad answer 1", "bad answer 2"), Arrays.asList("good answer 1", "good answer 2"), 4),
-                new QuestionDb(null, "question 2", Arrays.asList("bad answer 3", "bad answer 4", "bad answer 5"), Arrays.asList("good answer 3"), 3)
+                new QuestionDb(null, "question 1", Arrays.asList("bad answer 1", "bad answer 2"), Arrays.asList("good answer 1", "good answer 2")),
+                new QuestionDb(null, "question 2", Arrays.asList("bad answer 3", "bad answer 4", "bad answer 5"), Arrays.asList("good answer 3"))
         ), assignmentTestDb.getQuestions());
     }
 
@@ -109,7 +109,7 @@ public class AssignmentTestControllerTest extends Helper {
                 //language=JSON
                 content().json("[\n" +
                         "  {\n" +
-                        "    \"assignmentId\": " + assignment.getAssignmentId() + ",\n" +
+                        "    \"id\": " + assignment.getId() + ",\n" +
                         "    \"name\": \"test assignment\",\n" +
                         "    \"questions\": [\n" +
                         "      {\n" +
@@ -149,7 +149,7 @@ public class AssignmentTestControllerTest extends Helper {
         shouldCreateAssignment();
 
         val assignmentId = assignmentTestRepository.findByName("test assignment").stream()
-                .map(AssignmentTestDb::getAssignmentId)
+                .map(AssignmentTestDb::getId)
                 .findFirst()
                 .orElseThrow(NoSuchElementException::new);
 
@@ -186,7 +186,7 @@ public class AssignmentTestControllerTest extends Helper {
         assertEquals("test assignment 2", actual.getName());
         assertEquals(TeacherUserDb.builder().login(SOME_LOGIN).name(SOME_LOGIN).build(), actual.getCreatedBy());
         assertEquals(Collections.singletonList(
-                new QuestionDb(null, "question 3", Arrays.asList("bad answer 7", "bad answer 8", "bad answer 9"), Collections.singletonList("good answer 0"), 2)
+                new QuestionDb(null, "question 3", Arrays.asList("bad answer 7", "bad answer 8", "bad answer 9"), Collections.singletonList("good answer 0"))
         ), actual.getQuestions());
     }
 
@@ -196,7 +196,7 @@ public class AssignmentTestControllerTest extends Helper {
         shouldCreateAssignment();
 
         val assignmentId = assignmentTestRepository.findByName("test assignment").stream()
-                .map(AssignmentTestDb::getAssignmentId)
+                .map(AssignmentTestDb::getId)
                 .findFirst()
                 .orElseThrow(RuntimeException::new);
 

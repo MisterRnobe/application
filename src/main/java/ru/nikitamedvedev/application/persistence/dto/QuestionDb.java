@@ -25,6 +25,5 @@ public class QuestionDb {
     private List<String> badAnswers;
     @ElementCollection
     private List<String> goodAnswers;
-    private Integer displayAnswers;
 
 }

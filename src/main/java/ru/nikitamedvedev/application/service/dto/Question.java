@@ -14,6 +14,5 @@ public class Question {
     private String question;
     private List<String> badAnswers;
     private List<String> goodAnswers;
-    private Integer displayAnswers;
 
 }

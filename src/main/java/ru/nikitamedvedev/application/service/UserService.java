@@ -6,19 +6,18 @@ import lombok.val;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 import ru.nikitamedvedev.application.persistence.GroupRepository;
+import ru.nikitamedvedev.application.persistence.StudentUserRepository;
 import ru.nikitamedvedev.application.persistence.SubjectRepository;
 import ru.nikitamedvedev.application.persistence.TeacherUserRepository;
 import ru.nikitamedvedev.application.persistence.dto.GroupDb;
+import ru.nikitamedvedev.application.persistence.dto.StudentUserDb;
 import ru.nikitamedvedev.application.persistence.dto.SubjectDb;
 import ru.nikitamedvedev.application.persistence.dto.TeacherUserDb;
 import ru.nikitamedvedev.application.hepler.PasswordGenerator;
 import ru.nikitamedvedev.application.service.converter.TeacherUserDbToTeacherUserConverter;
 import ru.nikitamedvedev.application.service.dto.TeacherUser;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,35 +26,23 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final TeacherUserRepository teacherUserRepository;
+    private final StudentUserRepository studentUserRepository;
     private final SubjectRepository subjectRepository;
     private final GroupRepository groupRepository;
     //    private final PasswordEncoder passwordEncoder;
     private final PasswordGenerator passwordGenerator;
     private final TeacherUserDbToTeacherUserConverter converter;
 
-    public List<Account> createGroupWithUsers(String groupName, List<String> names) {
-        GroupDb groupDb = new GroupDb();
-        groupDb.setName(groupName);
-        GroupDb persistedGroup = groupRepository.save(groupDb);
-        List<TeacherUserDb> users = names.stream()
-                .map(name ->
-                        TeacherUserDb.builder()
-                                .login(passwordGenerator.generate(10)) // TODO: 03.02.2019 LOL
-                                .name(name)
-                                .build())
+    public List<Account> createGroupWithUsers(String groupName, Map<String, String> loginsToName) {
+        val saved = groupRepository.save(new GroupDb(null, groupName, Collections.emptyList()));
+
+        List<StudentUserDb> collect = loginsToName.entrySet().stream()
+                .map(entry -> {
+                    return new StudentUserDb(entry.getKey(), "", entry.getValue(), saved);
+                })
                 .collect(Collectors.toList());
-        // TODO: 03.02.2019 Find out another way
-        List<TeacherUserDb> withEncoded = users.stream()
-//                .peek(user -> user.setPassword(passwordEncoder.encode(user.getPassword())))
-                .collect(Collectors.toList());
-        teacherUserRepository.saveAll(withEncoded);
-        return users.stream()
-                .map(userDb ->
-                        Account.builder()
-                                .login(userDb.getLogin())
-                                .name(userDb.getName())
-                                .build())
-                .collect(Collectors.toList());
+        studentUserRepository.saveAll(collect);
+        return null;
     }
 
     //User -> Password

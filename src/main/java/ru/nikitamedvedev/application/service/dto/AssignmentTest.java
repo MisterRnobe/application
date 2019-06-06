@@ -11,9 +11,10 @@ import java.util.List;
 @AllArgsConstructor
 public class AssignmentTest {
 
-    private Long assignmentId;
+    private Long id;
     private String name;
     private List<Question> questions;
+    private Integer scores;
     private TeacherUser createdBy;
 
 }

@@ -17,6 +17,7 @@ public class GroupDb {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
     private String name;
     @ManyToMany
     private List<SubjectDb> subjectDbs;

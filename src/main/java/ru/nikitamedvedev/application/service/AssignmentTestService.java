@@ -27,10 +27,10 @@ public class AssignmentTestService {
     private final TeacherUserRepository teacherUserRepository;
 
     @Transactional
-    public void createAssignment(String name, List<Question> questions, String postedBy) {
+    public void createAssignment(String name, List<Question> questions, Integer scores, String postedBy) {
         val questionDbs = convertQuestions(questions);
 
-        val saved = assignmentTestRepository.save(new AssignmentTestDb(null, name, questionDbs, teacherUserRepository.findById(postedBy).orElseThrow(() -> new RuntimeException("TeacherUser " + postedBy + " not found"))));
+        val saved = assignmentTestRepository.save(new AssignmentTestDb(null, name, questionDbs, scores, teacherUserRepository.findById(postedBy).orElseThrow(() -> new RuntimeException("TeacherUser " + postedBy + " not found"))));
         log.info("Created: {}", saved);
     }
 
@@ -45,7 +45,7 @@ public class AssignmentTestService {
 
     private List<QuestionDb> convertQuestions(List<Question> questions) {
         return questions.stream()
-                .map(question -> new QuestionDb(null, question.getQuestion(), question.getBadAnswers(), question.getGoodAnswers(), question.getDisplayAnswers()))
+                .map(question -> new QuestionDb(null, question.getQuestion(), question.getBadAnswers(), question.getGoodAnswers()))
                 .collect(Collectors.toList());
     }
 

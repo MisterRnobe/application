@@ -17,11 +17,11 @@ public class AssignmentTestController {
 
     private final AssignmentTestService assignmentTestService;
 
-    @PutMapping(path = "/create")
-    public void createAssignmentTest(@RequestParam String postedBy,
+    @PutMapping(path = "/create/{login}")
+    public void createAssignmentTest(@PathVariable String login,
                                      @RequestBody CreateAssignmentTestRequest request) {
         log.info("Received create test assignment request: {}", request);
-        assignmentTestService.createAssignment(request.getName(), request.getQuestions(), postedBy);
+        assignmentTestService.createAssignment(request.getName(), request.getQuestions(), request.getScores(), login);
         log.info("Create test assignment request was proceeded");
     }
 

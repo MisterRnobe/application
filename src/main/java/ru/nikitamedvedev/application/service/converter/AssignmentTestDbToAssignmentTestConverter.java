@@ -21,16 +21,17 @@ public class AssignmentTestDbToAssignmentTestConverter implements Converter<Assi
     @Override
     public AssignmentTest convert(AssignmentTestDb assignmentTestDb) {
         val assignmentTest = new AssignmentTest();
-        assignmentTest.setAssignmentId(assignmentTestDb.getAssignmentId());
+        assignmentTest.setId(assignmentTestDb.getId());
         assignmentTest.setCreatedBy(userConverter.convert(assignmentTestDb.getCreatedBy()));
         assignmentTest.setName(assignmentTestDb.getName());
         assignmentTest.setQuestions(convertQuestions(assignmentTestDb.getQuestions()));
+        assignmentTest.setScores(assignmentTestDb.getScores());
         return assignmentTest;
     }
 
     private List<Question> convertQuestions(List<QuestionDb> questions) {
         return questions.stream()
-                .map(questionDb -> new Question(questionDb.getQuestion(), questionDb.getBadAnswers(), questionDb.getGoodAnswers(), questionDb.getDisplayAnswers()))
+                .map(questionDb -> new Question(questionDb.getQuestion(), questionDb.getBadAnswers(), questionDb.getGoodAnswers()))
                 .collect(Collectors.toList());
     }
 }

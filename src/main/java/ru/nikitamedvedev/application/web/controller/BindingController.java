@@ -3,32 +3,25 @@ package ru.nikitamedvedev.application.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.nikitamedvedev.application.service.AssignmentBindingService;
-import ru.nikitamedvedev.application.web.dto.AddBindingRequest;
+
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping(path = "/assignment-binding")
+@RequestMapping(path = "/binding")
 @RequiredArgsConstructor
 public class BindingController {
 
     private final AssignmentBindingService assignmentBindingService;
 
-    @PutMapping(path = "/add/{login}")
-    public void addBinding(@PathVariable String login,
-                           @RequestBody AddBindingRequest request) {
-        log.info("Received: {}", request);
-        assignmentBindingService.bindAssignment(
-                login,
-                request.getAssignmentId(),
-                request.getGroupId(),
-                request.getSemesterId(),
-                request.getSubjectId(),
-                request.getScores(),
-                request.getStartDate()
-        );
+    @GetMapping(path = "/get-by-group/{groupId}")
+    public Map<String, List<Object>> getAllBindingsByGroup(@PathVariable Long groupId) {
+        return assignmentBindingService.getAllBindingsByGroup(groupId);
     }
-
-
 }

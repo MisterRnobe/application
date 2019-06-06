@@ -15,7 +15,7 @@ import java.util.List;
 public class AssignmentTestDb {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long assignmentId;
+    private Long id;
 
     private String name;
 
@@ -23,6 +23,7 @@ public class AssignmentTestDb {
             cascade = CascadeType.ALL
     )
     private List<QuestionDb> questions;
+    private Integer scores;
     @OneToOne
     private TeacherUserDb createdBy;
 

@@ -8,4 +8,6 @@ import java.util.List;
 public interface AssignmentBindingRepository extends JpaRepository<AssignmentBindingDb, Long> {
 
     List<AssignmentBindingDb> findByCreated_Login(String login);
+
+    List<AssignmentBindingDb> findByGroup_Id(Long groupId);
 }

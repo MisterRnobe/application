@@ -14,5 +14,6 @@ public class CreateAssignmentTestRequest {
 
     private String name;
     private List<Question> questions;
+    private Integer scores;
 
 }
