@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.nikitamedvedev.application.service.ResultService;
 import ru.nikitamedvedev.application.web.dto.FullAssignmentResultResponse;
+import ru.nikitamedvedev.application.web.dto.UpdateResultRequest;
 
 import java.util.List;
 
@@ -34,17 +35,19 @@ public class ResultController {
     @GetMapping(path = "/get-new-results/{teacher}")
     public List<FullAssignmentResultResponse> getAllNewResults(@PathVariable String teacher) {
         return resultService.getFullNewAssignmentResultsFor(teacher);
-//        List<AssignmentResultResponse> resultListMap = resultService.getAllNewResultFor(teacher)
-//                .stream()
-//                .map(pair -> new AssignmentResultResponse(pair.getFirst(), pair.getSecond()))
-//                .collect(Collectors.toList());
     }
 
     @PostMapping(path = "/update-status/{resultId}")
     public void updateResultStatus(@PathVariable Long resultId,
-                                   UpdateResultRequest request) {
+                                   @RequestBody UpdateResultRequest request) {
         resultService.updateStatus(resultId, request.getComment(), request.getScores(), request.getStatus());
-
     }
+
+    @GetMapping(path = "/get-all-by-student/{teacherLogin}/{studentLogin}")
+    public List<FullAssignmentResultResponse> getByStudent(@PathVariable String teacherLogin,
+                                                           @PathVariable String studentLogin) {
+        return resultService.getAllResultsGroupedBySubjectFor(teacherLogin, studentLogin);
+    }
+
 
 }

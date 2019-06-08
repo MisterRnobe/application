@@ -1,4 +1,4 @@
-package ru.nikitamedvedev.application.web.controller;
+package ru.nikitamedvedev.application.web.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

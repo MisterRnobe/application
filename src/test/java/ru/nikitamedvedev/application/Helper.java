@@ -7,7 +7,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.nikitamedvedev.application.persistence.AssignmentRepository;
-import ru.nikitamedvedev.application.persistence.AssignmentTestRepository;
 import ru.nikitamedvedev.application.persistence.GroupRepository;
 import ru.nikitamedvedev.application.persistence.TeacherUserRepository;
 import ru.nikitamedvedev.application.persistence.dto.AssignmentDb;
@@ -36,12 +35,9 @@ public class Helper {
     protected TeacherUserRepository teacherUserRepository;
     @Autowired
     protected GroupRepository groupRepository;
-    @Autowired
-    protected AssignmentTestRepository assignmentTestRepository;
 
     protected void purgeDatabase() {
         assignmentRepository.deleteAll();
-        assignmentTestRepository.deleteAll();
         teacherUserRepository.deleteAll();
 
         groupRepository.deleteAll();

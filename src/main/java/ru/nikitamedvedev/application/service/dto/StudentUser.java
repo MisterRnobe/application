@@ -4,16 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommonAssignment {
+public class StudentUser {
 
-    private Long id;
+    private String login;
     private String name;
-    private TeacherUser createdBy;
-    private AssignmentType type;
-
 }

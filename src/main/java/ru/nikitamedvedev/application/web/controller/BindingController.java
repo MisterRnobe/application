@@ -12,7 +12,6 @@ import ru.nikitamedvedev.application.service.AssignmentBindingService;
 import ru.nikitamedvedev.application.service.ResultService;
 import ru.nikitamedvedev.application.service.dto.AssignmentBinding;
 import ru.nikitamedvedev.application.service.dto.AssignmentResult;
-import ru.nikitamedvedev.application.service.dto.AssignmentType;
 import ru.nikitamedvedev.application.web.dto.AssignmentBindingCommonResponse;
 
 import java.util.*;
@@ -59,7 +58,6 @@ public class BindingController {
                     response.setScores(assignmentBinding.getScores());
                     response.setStarts(assignmentBinding.getStarts());
                     response.setResults(Optional.ofNullable(resultMap.get(assignmentBinding.getId())).orElse(Collections.emptyList()));
-                    response.setType(AssignmentType.ASSIGNMENT);
                     return response;
                 })
                 .collect(Collectors.toList());

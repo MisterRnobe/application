@@ -15,6 +15,8 @@ import ru.nikitamedvedev.application.persistence.dto.SubjectDb;
 import ru.nikitamedvedev.application.persistence.dto.TeacherUserDb;
 import ru.nikitamedvedev.application.hepler.PasswordGenerator;
 import ru.nikitamedvedev.application.service.converter.TeacherUserDbToTeacherUserConverter;
+import ru.nikitamedvedev.application.service.dto.StudentGrades;
+import ru.nikitamedvedev.application.service.dto.StudentUser;
 import ru.nikitamedvedev.application.service.dto.TeacherUser;
 
 import java.util.*;
@@ -69,5 +71,12 @@ public class UserService {
 
         val save = teacherUserRepository.save(teacherUserDb);
         log.info("Saved: {}", save);
+    }
+
+    public List<StudentUser> getStudentsByGroup(Long groupId) {
+        return studentUserRepository.findByGroup_Id(groupId)
+                .stream()
+                .map(studentUserDb -> new StudentUser(studentUserDb.getLogin(), studentUserDb.getName()))
+                .collect(Collectors.toList());
     }
 }

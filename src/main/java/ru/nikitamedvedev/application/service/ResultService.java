@@ -130,4 +130,13 @@ public class ResultService {
         assignmentResultRepository.save(assignmentResult);
         log.info("Updated!");
     }
+
+    //Subject name ->
+    public Map<String, FullAssignmentResultResponse> getAllResultsGroupedBySubjectFor(String teacherLogin, String studentLogin) {
+        assignmentBindingRepository.findByCreated_Login(teacherLogin)
+                .stream()
+                .map(assignmentBindingDb -> {
+
+                })
+    }
 }

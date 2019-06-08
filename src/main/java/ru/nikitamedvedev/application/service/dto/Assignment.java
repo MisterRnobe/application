@@ -6,13 +6,11 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class Assignment extends CommonAssignment {
+public class Assignment {
 
-    {
-        this.setType(AssignmentType.ASSIGNMENT);
-    }
-
+    private Long id;
+    private String name;
+    private TeacherUser createdBy;
     private Long fileId;
 
 }

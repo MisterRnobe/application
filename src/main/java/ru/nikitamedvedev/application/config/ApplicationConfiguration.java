@@ -7,12 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.nikitamedvedev.application.hepler.PasswordGenerator;
 import ru.nikitamedvedev.application.service.*;
-import ru.nikitamedvedev.application.service.dto.Question;
 import ru.nikitamedvedev.application.service.dto.Status;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collections;
 
 @Configuration
 public class ApplicationConfiguration {
@@ -33,7 +30,6 @@ public class ApplicationConfiguration {
                                                SubjectService subjectService,
                                                SemesterService semesterService,
                                                AssignmentService assignmentService,
-                                               AssignmentTestService assignmentTestService,
                                                AssignmentBindingService assignmentBindingService) {
         return (args) -> {
             val teacherLogin = "prepod";
@@ -54,14 +50,6 @@ public class ApplicationConfiguration {
             userService.bindTeacherToSubject(teacherLogin, 2L);
             userService.bindTeacherToSubject(teacherLogin, 3L);
 
-            assignmentTestService.createAssignment(
-                    "Test #1",
-                    Arrays.asList(
-                            new Question("Question #1", Arrays.asList("Bad 1", "Bad 2"), Collections.singletonList("Ok 1")),
-                            new Question("Question #2", Arrays.asList("Bad 3", "Bad 4"), Collections.singletonList("Ok 2")),
-                            new Question("Question #3", Arrays.asList("Bad 5", "Bad 6"), Collections.singletonList("Ok 3"))
-                    ),
-                    teacherLogin);
             assignmentService.createAssignment(
                     "Задание #1",
                     "file.txt",
@@ -96,16 +84,6 @@ public class ApplicationConfiguration {
                     LocalDate.of(2019, 5, 1)
             );
 
-            assignmentBindingService.bindAssignmentTest(
-                    teacherLogin,
-                    1L,
-                    1L,
-                    2L,
-                    3L,
-                    12,
-                    LocalDate.of(2019, 5, 5),
-                    10
-            );
             resultService.addAssignmentResult(
                     1L,
                     "student",
@@ -134,16 +112,6 @@ public class ApplicationConfiguration {
                     "rabota_again.txt",
                     "Шрек ита кек".getBytes()
             );
-//            assignmentTestService.createAssignment(
-//                    "Test #2",
-//                    Arrays.asList(
-//                            new Question("Question #4", Arrays.asList("Bad 7", "Bad 8"), Collections.singletonList("Ok 4")),
-//                            new Question("Question #5", Arrays.asList("Bad 9", "Bad 10"), Collections.singletonList("Ok 5")),
-//                            new Question("Question #6", Arrays.asList("Bad 11", "Bad 12"), Collections.singletonList("Ok 6"))
-//                    ),
-//                    2,
-//                    teacherLogin);
-
         };
     }
 }

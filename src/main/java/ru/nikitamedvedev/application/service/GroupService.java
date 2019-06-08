@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
+import ru.nikitamedvedev.application.persistence.AssignmentBindingRepository;
 import ru.nikitamedvedev.application.persistence.GroupRepository;
 import ru.nikitamedvedev.application.persistence.SubjectRepository;
+import ru.nikitamedvedev.application.persistence.dto.AssignmentBindingDb;
 import ru.nikitamedvedev.application.persistence.dto.GroupDb;
 import ru.nikitamedvedev.application.persistence.dto.SubjectDb;
 import ru.nikitamedvedev.application.service.converter.GroupDbToGroupConverter;
@@ -28,6 +30,8 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final GroupDbToGroupConverter converter;
     private final SubjectRepository subjectRepository;
+
+    private final AssignmentBindingRepository assignmentBindingRepository;
 
     public List<Group> getAllGroups() {
         return groupRepository.findAllBy().stream()
@@ -56,6 +60,14 @@ public class GroupService {
     private List<Subject> convertSubjects(List<SubjectDb> subjectDbs) {
         return subjectDbs.stream()
                 .map(subjectDb -> new Subject(subjectDb.getId(), subjectDb.getSubjectName()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Group> getByTeacher(String login) {
+        return assignmentBindingRepository.findByCreated_Login(login).stream()
+                .map(AssignmentBindingDb::getGroup)
+                .map(converter::convert)
+                .distinct()
                 .collect(Collectors.toList());
     }
 }
