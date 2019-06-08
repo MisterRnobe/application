@@ -25,7 +25,6 @@ public class AssignmentTestDbToAssignmentTestConverter implements Converter<Assi
         assignmentTest.setCreatedBy(userConverter.convert(assignmentTestDb.getCreatedBy()));
         assignmentTest.setName(assignmentTestDb.getName());
         assignmentTest.setQuestions(convertQuestions(assignmentTestDb.getQuestions()));
-        assignmentTest.setScores(assignmentTestDb.getScores());
         return assignmentTest;
     }
 

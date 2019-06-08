@@ -26,11 +26,10 @@ public class AssignmentTestService {
     private final AssignmentTestRepository assignmentTestRepository;
     private final TeacherUserRepository teacherUserRepository;
 
-    @Transactional
-    public void createAssignment(String name, List<Question> questions, Integer scores, String postedBy) {
+    public void createAssignment(String name, List<Question> questions, String postedBy) {
         val questionDbs = convertQuestions(questions);
 
-        val saved = assignmentTestRepository.save(new AssignmentTestDb(null, name, questionDbs, scores, teacherUserRepository.findById(postedBy).orElseThrow(() -> new RuntimeException("TeacherUser " + postedBy + " not found"))));
+        AssignmentTestDb saved = assignmentTestRepository.save(new AssignmentTestDb(null, name, questionDbs, teacherUserRepository.findById(postedBy).orElseThrow(() -> new RuntimeException("TeacherUser " + postedBy + " not found"))));
         log.info("Created: {}", saved);
     }
 

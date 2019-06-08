@@ -23,7 +23,6 @@ public class AssignmentTestDb {
             cascade = CascadeType.ALL
     )
     private List<QuestionDb> questions;
-    private Integer scores;
     @OneToOne
     private TeacherUserDb createdBy;
 

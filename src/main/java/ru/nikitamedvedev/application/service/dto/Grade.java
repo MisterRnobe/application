@@ -5,15 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class AssignmentResult {
+@NoArgsConstructor
+public class Grade {
 
-    private Long id;
-    private Long assignmentBindingId;
-    private String created;
-    private Long fileId;
-    private String comment;
     private Integer scores;
     private Status status;
+
 }

@@ -9,5 +9,5 @@ public interface AssignmentBindingRepository extends JpaRepository<AssignmentBin
 
     List<AssignmentBindingDb> findByCreated_Login(String login);
 
-    List<AssignmentBindingDb> findByGroup_Id(Long groupId);
+    List<AssignmentBindingDb> findByGroup_IdAndSemester_Id(Long groupId, Long semesterId);
 }

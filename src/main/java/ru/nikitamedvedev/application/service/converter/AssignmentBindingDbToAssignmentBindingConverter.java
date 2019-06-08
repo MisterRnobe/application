@@ -19,6 +19,7 @@ public class AssignmentBindingDbToAssignmentBindingConverter implements Converte
     @Override
     public AssignmentBinding convert(AssignmentBindingDb assignmentBindingDb) {
         return new AssignmentBinding(
+                assignmentBindingDb.getId(),
                 assignmentConverter.convert(assignmentBindingDb.getAssignment()),
                 teacherUserConverter.convert(assignmentBindingDb.getCreated()),
                 semesterConverter.convert(assignmentBindingDb.getSemester()),

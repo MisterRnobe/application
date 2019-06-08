@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Configuration;
 import ru.nikitamedvedev.application.hepler.PasswordGenerator;
 import ru.nikitamedvedev.application.service.*;
 import ru.nikitamedvedev.application.service.dto.Question;
+import ru.nikitamedvedev.application.service.dto.Status;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -29,6 +29,7 @@ public class ApplicationConfiguration {
 
     @Bean
     public CommandLineRunner commandLineRunner(UserService userService,
+                                               ResultService resultService,
                                                SubjectService subjectService,
                                                SemesterService semesterService,
                                                AssignmentService assignmentService,
@@ -42,7 +43,7 @@ public class ApplicationConfiguration {
             subjectService.createSubject("История");
             subjectService.createSubject("РУсский язык");
 
-            userService.createGroupWithUsers("Группа 1", ImmutableMap.of("student1", "Студент Студентов"));
+            userService.createGroupWithUsers("Группа 1", ImmutableMap.of("student", "Студент Студентов", "student1", "Студент Первый"));
 
             semesterService.createSemester("Семестр 1");
             semesterService.createSemester("Семестр 2");
@@ -60,12 +61,18 @@ public class ApplicationConfiguration {
                             new Question("Question #2", Arrays.asList("Bad 3", "Bad 4"), Collections.singletonList("Ok 2")),
                             new Question("Question #3", Arrays.asList("Bad 5", "Bad 6"), Collections.singletonList("Ok 3"))
                     ),
-                    5,
                     teacherLogin);
             assignmentService.createAssignment(
                     "Задание #1",
                     "file.txt",
                     "Content".getBytes(),
+                    teacherLogin
+            );
+
+            assignmentService.createAssignment(
+                    "Задание #2",
+                    "другой файл.txt",
+                    "Дороф".getBytes(),
                     teacherLogin
             );
 
@@ -79,6 +86,16 @@ public class ApplicationConfiguration {
                     LocalDate.of(2019, 1, 1)
             );
 
+            assignmentBindingService.bindAssignment(
+                    teacherLogin,
+                    2L,
+                    1L,
+                    2L,
+                    1L,
+                    8,
+                    LocalDate.of(2019, 5, 1)
+            );
+
             assignmentBindingService.bindAssignmentTest(
                     teacherLogin,
                     1L,
@@ -88,6 +105,34 @@ public class ApplicationConfiguration {
                     12,
                     LocalDate.of(2019, 5, 5),
                     10
+            );
+            resultService.addAssignmentResult(
+                    1L,
+                    "student",
+                    "rabota.txt",
+                    "Lmao))".getBytes()
+            );
+
+            resultService.addAssignmentResult(
+                    1L,
+                    "student1",
+                    "lol.txt",
+                    "shreq is qeq".getBytes()
+            );
+
+            resultService.addAssignmentResult(
+                    2L,
+                    "student",
+                    "crud.txt",
+                    "Я крутой, так сказатб))".getBytes()
+            );
+
+            resultService.updateStatus(1L, "Переделать", 0, Status.NOT_ACCEPTED);
+            resultService.addAssignmentResult(
+                    1L,
+                    "student",
+                    "rabota_again.txt",
+                    "Шрек ита кек".getBytes()
             );
 //            assignmentTestService.createAssignment(
 //                    "Test #2",

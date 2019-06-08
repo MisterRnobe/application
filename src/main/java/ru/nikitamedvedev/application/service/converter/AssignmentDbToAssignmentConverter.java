@@ -1,6 +1,7 @@
 package ru.nikitamedvedev.application.service.converter;
 
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import ru.nikitamedvedev.application.persistence.dto.AssignmentDb;
@@ -16,11 +17,11 @@ public class AssignmentDbToAssignmentConverter implements Converter<AssignmentDb
 
     @Override
     public Assignment convert(AssignmentDb assignmentDb) {
-        return Assignment.builder()
-                .id(assignmentDb.getId())
-                .name(assignmentDb.getName())
-                .createdBy(userConverter.convert(assignmentDb.getPosted()))
-                .fileId(assignmentDb.getFile().getId())
-                .build();
+        val assignment = new Assignment();
+        assignment.setId(assignmentDb.getId());
+        assignment.setName(assignmentDb.getName());
+        assignment.setCreatedBy(userConverter.convert(assignmentDb.getPosted()));
+        assignment.setFileId(assignmentDb.getFile().getId());
+        return assignment;
     }
 }

@@ -2,6 +2,7 @@ package ru.nikitamedvedev.application.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -9,12 +10,13 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AssignmentTest {
+@EqualsAndHashCode(callSuper = true)
+public class AssignmentTest extends CommonAssignment {
 
-    private Long id;
-    private String name;
+    {
+        this.setType(AssignmentType.TEST);
+    }
+
     private List<Question> questions;
-    private Integer scores;
-    private TeacherUser createdBy;
 
 }

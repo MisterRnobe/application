@@ -20,7 +20,12 @@ public class SemesterController {
     private final SemesterService semesterService;
 
     @GetMapping(path = "/get-all")
-    public List<Semester> getAllSemesters(){
+    public List<Semester> getAllSemesters() {
         return semesterService.getAllSemesters();
+    }
+
+    @GetMapping(path = "/get-current")
+    public Semester getCurrent() {
+        return semesterService.getCurrentSemester();
     }
 }

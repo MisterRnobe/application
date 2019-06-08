@@ -21,7 +21,7 @@ public class AssignmentTestController {
     public void createAssignmentTest(@PathVariable String login,
                                      @RequestBody CreateAssignmentTestRequest request) {
         log.info("Received create test assignment request: {}", request);
-        assignmentTestService.createAssignment(request.getName(), request.getQuestions(), request.getScores(), login);
+        assignmentTestService.createAssignment(request.getName(), request.getQuestions(), login);
         log.info("Create test assignment request was proceeded");
     }
 

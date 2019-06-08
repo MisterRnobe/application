@@ -23,8 +23,8 @@ public class AssignmentController {
 
     @SneakyThrows
     @PostMapping(path = "/create/{login}")
-    public void createAssignment(@RequestParam("file") MultipartFile file,
-                                 @RequestParam("name") String name,
+    public void createAssignment(@RequestParam MultipartFile file,
+                                 @RequestParam String name,
                                  @PathVariable String login) {
         log.info("Received add assignment response: {} with filename {} by {}", name, file.getOriginalFilename(), login);
         assignmentService.createAssignment(name, file.getOriginalFilename(), file.getBytes(), login);

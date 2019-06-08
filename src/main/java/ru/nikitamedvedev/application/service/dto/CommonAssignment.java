@@ -4,16 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AssignmentResult {
+public class CommonAssignment {
 
     private Long id;
-    private Long assignmentBindingId;
-    private String created;
-    private Long fileId;
-    private String comment;
-    private Integer scores;
-    private Status status;
+    private String name;
+    private TeacherUser createdBy;
+    private AssignmentType type;
+
 }

@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class AssignmentBinding {
 
+    private Long id;
     private Assignment assignment;
     private TeacherUser created;
     private Semester semester;

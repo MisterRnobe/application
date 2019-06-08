@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.nikitamedvedev.application.service.dto.Status;
 
 import javax.persistence.*;
 
@@ -13,20 +14,23 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ResultDb {
+public class AssignmentResultDb {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private TeacherUserDb user;
+    private AssignmentBindingDb assignmentBinding;
+
     @ManyToOne
-    @JoinColumn(name = "assignment_id")
-    private AssignmentDb assignment;
-    private Integer result;
-    private ResultStatus status;
-    @Column(columnDefinition = "varbinary(max)")
-    private byte[] source;
-    private String fileName;
+    private StudentUserDb created;
+    @OneToOne(cascade = CascadeType.ALL)
+    private FileDb file;
+    @Column(columnDefinition = "text")
+    private String comment;
+
+    private Integer scores;
+    private Status status;
+
 }
