@@ -10,6 +10,7 @@ import ru.nikitamedvedev.application.web.dto.FullAssignmentResultResponse;
 import ru.nikitamedvedev.application.web.dto.UpdateResultRequest;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -44,8 +45,8 @@ public class ResultController {
     }
 
     @GetMapping(path = "/get-all-by-student/{teacherLogin}/{studentLogin}")
-    public List<FullAssignmentResultResponse> getByStudent(@PathVariable String teacherLogin,
-                                                           @PathVariable String studentLogin) {
+    public Map<String, FullAssignmentResultResponse> getByStudent(@PathVariable String teacherLogin,
+                                                                  @PathVariable String studentLogin) {
         return resultService.getAllResultsGroupedBySubjectFor(teacherLogin, studentLogin);
     }
 

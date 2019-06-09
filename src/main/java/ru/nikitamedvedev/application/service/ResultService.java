@@ -16,6 +16,8 @@ import ru.nikitamedvedev.application.web.dto.FullAssignmentResultResponse;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyMap;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static ru.nikitamedvedev.application.hepler.ExceptionUtils.entityNotFound;
 
@@ -131,12 +133,52 @@ public class ResultService {
         log.info("Updated!");
     }
 
-    //Subject name ->
-    public Map<String, FullAssignmentResultResponse> getAllResultsGroupedBySubjectFor(String teacherLogin, String studentLogin) {
-        assignmentBindingRepository.findByCreated_Login(teacherLogin)
+    //Subject name -> {Assignment name -> Result}
+    //New = Last one
+    public Map<String, Map<String, FullAssignmentResultResponse>> getAllResultsGroupedBySubjectFor(String teacherLogin, String studentLogin) {
+        Set<Long> bindingIds = assignmentBindingRepository.findByCreated_Login(teacherLogin)
                 .stream()
-                .map(assignmentBindingDb -> {
+                .map(AssignmentBindingDb::getId)
+                .collect(Collectors.toSet());
 
+        assignmentResultRepository.findByCreated_LoginAndAssignmentBinding_IdIn(studentLogin, bindingIds).stream()
+                .collect(groupingBy(resultDb -> resultDb.getAssignmentBinding().getSubject()))
+                .entrySet()
+                .stream()
+                .map(entry->{
+                    SubjectDb subjectDb = entry.getKey();
+                    entry.getValue().stream()
+                            .collect(groupingBy(assignmentResultDb -> assignmentResultDb.getAssignmentBinding().getAssignment()))
+                            .entrySet()
+                            .stream()
+                            .map(assignmentDbListEntry -> {
+                                AssignmentDb assignmentDb = assignmentDbListEntry.getKey();
+                                List<AssignmentResult> assignmentResults = assignmentDbListEntry.getValue()
+                                        .stream()
+                                        .map(assignmentResultConverter::convert)
+                                        .collect(toList());
+
+                            })
                 })
+        return emptyMap();
     }
+    /*
+    assignmentBindingDb -> {
+                    List<AssignmentResult> assignmentResults = assignmentResultRepository.findByCreated_LoginAndAssignmentBinding_Id(studentLogin, assignmentBindingDb.getId())
+                            .stream()
+                            .map(assignmentResultConverter::convert)
+                            .sorted(Comparator.comparing(AssignmentResult::getAssignmentBindingId))
+                            .collect(toList());
+                    List<AssignmentResult> oldResults = new ArrayList<>();
+                    AssignmentResult last = null;
+                    if (!assignmentResults.isEmpty()) {
+                        last = assignmentResults.get(assignmentResults.size() - 1);
+                        for (int i = 0; i < assignmentResults.size() - 1; i++) {
+                            oldResults.add(assignmentResults.get(i));
+                        }
+                    }
+
+
+                }
+     */
 }
