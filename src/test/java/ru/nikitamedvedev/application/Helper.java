@@ -52,7 +52,7 @@ public class Helper {
     }
 
     protected Long addGroup(String group) {
-        return groupRepository.save(new GroupDb(null, group, null)).getId();
+        return groupRepository.save(new GroupDb(null, group)).getId();
     }
 
     protected Long addAssignment(String name) {

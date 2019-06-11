@@ -30,23 +30,6 @@ public class GroupController {
         return groupService.getAllGroups();
     }
 
-    @PostMapping(path = "/bind-to-subject/{groupId}/{subjectId}")
-    public void bindToSubject(@PathVariable Long groupId,
-                              @PathVariable Long subjectId) {
-        log.info("Bind group {} to subject {}", groupId, subjectId);
-        groupService.bindToSubject(groupId, subjectId);
-        log.info("Bound!");
-    }
-
-    // TODO: 26.05.2019 By user
-    @GetMapping(path = "/get-all-bindings")
-    public List<GroupBindingResponse> getAllBindings() {
-        log.info("Get all group -> subject bindings");
-        return groupService.getAllBindingsToGroup()
-                .map(pair -> new GroupBindingResponse(pair.getFirst(), pair.getSecond()))
-                .collect(Collectors.toList());
-    }
-
     @GetMapping(path = "/get-by-teacher/{login}")
     public List<Group> getByTeacher(@PathVariable String login) {
         return groupService.getByTeacher(login);

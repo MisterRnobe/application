@@ -11,14 +11,15 @@ import ru.nikitamedvedev.application.persistence.AssignmentResultRepository;
 import ru.nikitamedvedev.application.persistence.StudentUserRepository;
 import ru.nikitamedvedev.application.persistence.dto.*;
 import ru.nikitamedvedev.application.service.dto.*;
+import ru.nikitamedvedev.application.web.dto.AllGradesResponse;
 import ru.nikitamedvedev.application.web.dto.FullAssignmentResultResponse;
+import ru.nikitamedvedev.application.web.dto.GroupGrades;
+import ru.nikitamedvedev.application.web.dto.StudentAssignmentGradeResponse;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyMap;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 import static ru.nikitamedvedev.application.hepler.ExceptionUtils.entityNotFound;
 
 @Slf4j
@@ -33,6 +34,7 @@ public class ResultService {
 
     private final Converter<AssignmentResultDb, AssignmentResult> assignmentResultConverter;
     private final Converter<AssignmentBindingDb, AssignmentBinding> assignmentBindingConverter;
+
 
     public Map<Long, List<AssignmentResult>> findAssignmentResultsForUser(String login) {
         return assignmentResultRepository.findByCreated_Login(login).stream()
@@ -56,22 +58,6 @@ public class ResultService {
         assignmentResultRepository.save(assignmentResultDb);
     }
 
-    public List<Pair<AssignmentResult, List<AssignmentResult>>> getAllNewResultFor(String teacher) {
-        return assignmentResultRepository.findByStatusAndAssignmentBinding_Created_Login(Status.NEW, teacher)
-                .stream()
-                .map(assignmentResultConverter::convert)
-                .map(result -> {
-                    val created = result.getCreated();
-                    val byCreated_login = assignmentResultRepository.findByCreated_Login(created)
-                            .stream()
-                            .filter(assignmentResultDb -> !assignmentResultDb.getStatus().equals(Status.NEW))
-                            .map(assignmentResultConverter::convert)
-                            .collect(toList());
-                    return Pair.of(result, byCreated_login);
-                })
-                .collect(toList());
-    }
-
     public List<StudentGrades> getAssignmentGradesForStudent(String login) {
         Long currentSemester = semesterService.getCurrentSemester().getId();
         StudentUserDb student = studentUserRepository.findById(login).orElseThrow(() -> entityNotFound("student", login));
@@ -91,7 +77,7 @@ public class ResultService {
                         Optional<AssignmentResultDb> lastResult = getLastResult(login, assignmentBinding.getId());
                         assignmentNameToGrade.put(assignmentBinding.getAssignment().getName(),
                                 lastResult
-                                        .map(result -> new Grade(result.getScores(), result.getStatus()))
+                                        .map(result -> new Grade(result.getScores(), result.getAssignmentBinding().getScores(), result.getStatus()))
                                         .orElse(new Grade()));
                     });
                     return new StudentGrades(subjectName, bindings.get(0).getCreated().getName(), assignmentNameToGrade);
@@ -133,52 +119,88 @@ public class ResultService {
         log.info("Updated!");
     }
 
-    //Subject name -> {Assignment name -> Result}
-    //New = Last one
-    public Map<String, Map<String, FullAssignmentResultResponse>> getAllResultsGroupedBySubjectFor(String teacherLogin, String studentLogin) {
+    public Map<String, Map<AssignmentBinding, List<AssignmentResult>>> getAllResultsGroupedBySubjectFor(String teacherLogin, String studentLogin) {
         Set<Long> bindingIds = assignmentBindingRepository.findByCreated_Login(teacherLogin)
                 .stream()
                 .map(AssignmentBindingDb::getId)
                 .collect(Collectors.toSet());
 
-        assignmentResultRepository.findByCreated_LoginAndAssignmentBinding_IdIn(studentLogin, bindingIds).stream()
+        return assignmentResultRepository.findByCreated_LoginAndAssignmentBinding_IdIn(studentLogin, bindingIds).stream()
                 .collect(groupingBy(resultDb -> resultDb.getAssignmentBinding().getSubject()))
                 .entrySet()
                 .stream()
-                .map(entry->{
+                .map(entry -> {
                     SubjectDb subjectDb = entry.getKey();
-                    entry.getValue().stream()
-                            .collect(groupingBy(assignmentResultDb -> assignmentResultDb.getAssignmentBinding().getAssignment()))
+                    Map<AssignmentBinding, List<AssignmentResult>> map = entry.getValue().stream()
+                            .collect(groupingBy(AssignmentResultDb::getAssignmentBinding))
                             .entrySet()
                             .stream()
                             .map(assignmentDbListEntry -> {
-                                AssignmentDb assignmentDb = assignmentDbListEntry.getKey();
+                                AssignmentBinding assignmentBinding = assignmentBindingConverter.convert(assignmentDbListEntry.getKey());
                                 List<AssignmentResult> assignmentResults = assignmentDbListEntry.getValue()
                                         .stream()
                                         .map(assignmentResultConverter::convert)
+                                        .sorted(Comparator.comparing(AssignmentResult::getId))
                                         .collect(toList());
-
+                                return new AbstractMap.SimpleEntry<>(assignmentBinding, assignmentResults);
                             })
+                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                    return new AbstractMap.SimpleEntry<>(subjectDb.getSubjectName(), map);
                 })
-        return emptyMap();
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
-    /*
-    assignmentBindingDb -> {
-                    List<AssignmentResult> assignmentResults = assignmentResultRepository.findByCreated_LoginAndAssignmentBinding_Id(studentLogin, assignmentBindingDb.getId())
+
+    public List<AllGradesResponse> getByTeacher(String teacherLogin) {
+        return convertToResponse(assignmentBindingRepository.findByCreated_Login(teacherLogin));
+    }
+
+    public List<AllGradesResponse> getByGroupForTeacher(Long groupId, String teacherLogin) {
+        return convertToResponse(assignmentBindingRepository.findByCreated_LoginAndGroup_Id(teacherLogin, groupId));
+    }
+
+    public List<AllGradesResponse> getBySubjectForTeacher(Long subjectId, String teacherLogin) {
+        return convertToResponse(assignmentBindingRepository.findByCreated_LoginAndSubject_Id(teacherLogin, subjectId));
+    }
+
+    private List<AllGradesResponse> convertToResponse(List<AssignmentBindingDb> assignmentBindingDbs) {
+        return assignmentBindingDbs
+                .stream()
+                .collect(Collectors.groupingBy(AssignmentBindingDb::getSubject))
+                .entrySet()
+                .stream()
+                .map(subjectDbListEntry -> {
+                    SubjectDb subjectDb = subjectDbListEntry.getKey();
+                    List<GroupGrades> groupGrades = subjectDbListEntry.getValue()
                             .stream()
-                            .map(assignmentResultConverter::convert)
-                            .sorted(Comparator.comparing(AssignmentResult::getAssignmentBindingId))
+                            .collect(groupingBy(AssignmentBindingDb::getGroup))
+                            .entrySet()
+                            .stream()
+                            .map(groupDbListEntry -> {
+                                GroupDb groupDb = groupDbListEntry.getKey();
+                                List<AssignmentBindingDb> assignments = groupDbListEntry.getValue();
+                                List<StudentAssignmentGradeResponse> grades = studentUserRepository.findByGroup_Id(groupDb.getId()).stream()
+                                        .map(studentUserDb -> {
+                                            Map<Long, Grade> gradeMap = assignments.stream()
+                                                    .map(assignmentBindingDb ->
+                                                            getLastResult(studentUserDb.getLogin(), assignmentBindingDb.getId())
+                                                                    .map(resultDb -> Pair.of(resultDb.getAssignmentBinding().getId(),
+                                                                            new Grade(resultDb.getScores(), resultDb.getAssignmentBinding().getScores(), resultDb.getStatus())))
+                                                                    .orElse(Pair.of(assignmentBindingDb.getId(), new Grade(null, null, null)))
+                                                    )
+                                                    .collect(toMap(Pair::getFirst, Pair::getSecond));
+                                            return new StudentAssignmentGradeResponse(studentUserDb.getName(), gradeMap);
+                                        })
+                                        .collect(toList());
+                                return new GroupGrades(groupDb.getName(),
+                                        assignments.stream()
+                                                .map(assignmentBindingConverter::convert)
+                                                .map(AssignmentBinding::getAssignment)
+                                                .collect(toList()),
+                                        grades);
+                            })
                             .collect(toList());
-                    List<AssignmentResult> oldResults = new ArrayList<>();
-                    AssignmentResult last = null;
-                    if (!assignmentResults.isEmpty()) {
-                        last = assignmentResults.get(assignmentResults.size() - 1);
-                        for (int i = 0; i < assignmentResults.size() - 1; i++) {
-                            oldResults.add(assignmentResults.get(i));
-                        }
-                    }
-
-
-                }
-     */
+                    return new AllGradesResponse(subjectDb.getSubjectName(), groupGrades);
+                })
+                .collect(toList());
+    }
 }

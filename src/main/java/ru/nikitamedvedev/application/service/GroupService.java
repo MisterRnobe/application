@@ -29,37 +29,12 @@ public class GroupService {
 
     private final GroupRepository groupRepository;
     private final GroupDbToGroupConverter converter;
-    private final SubjectRepository subjectRepository;
 
     private final AssignmentBindingRepository assignmentBindingRepository;
 
     public List<Group> getAllGroups() {
         return groupRepository.findAllBy().stream()
                 .map(converter::convert)
-                .collect(Collectors.toList());
-    }
-
-    public void createGroup(String name) {
-        groupRepository.save(new GroupDb(null, name, Collections.emptyList()));
-    }
-
-    public void bindToSubject(Long groupId, Long subjectId) {
-        GroupDb group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new EntityNotFoundException("Group with id " + groupId + " was not found"));
-        group.getSubjectDbs().add(subjectRepository.findById(subjectId).orElseThrow(() -> new EntityNotFoundException("Subject with id " + subjectId + " was not found")));
-        GroupDb save = groupRepository.save(group);
-        log.info("saved: {}", save);
-    }
-
-    public Stream<Pair<Group, List<Subject>>> getAllBindingsToGroup() {
-        return groupRepository.findAllBy().stream()
-                .filter(groupDb -> !groupDb.getSubjectDbs().isEmpty())
-                .map(groupDb -> Pair.of(converter.convert(groupDb), convertSubjects(groupDb.getSubjectDbs())));
-    }
-
-    private List<Subject> convertSubjects(List<SubjectDb> subjectDbs) {
-        return subjectDbs.stream()
-                .map(subjectDb -> new Subject(subjectDb.getId(), subjectDb.getSubjectName()))
                 .collect(Collectors.toList());
     }
 

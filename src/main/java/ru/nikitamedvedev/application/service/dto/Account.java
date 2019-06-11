@@ -1,4 +1,4 @@
-package ru.nikitamedvedev.application.service;
+package ru.nikitamedvedev.application.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

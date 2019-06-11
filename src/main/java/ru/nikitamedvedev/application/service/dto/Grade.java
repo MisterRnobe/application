@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class Grade {
 
     private Integer scores;
+    private Integer maxAvailable;
     private Status status;
 
 }

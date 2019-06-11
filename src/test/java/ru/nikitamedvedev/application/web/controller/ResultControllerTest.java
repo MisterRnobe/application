@@ -5,25 +5,20 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class AssignmentControllerTest {
+public class ResultControllerTest {
 
     @Test
     @SneakyThrows
-    public void createAssignment() {
+    public void addAssignmentResultForStudent() {
     }
 
     @Test
     @SneakyThrows
-    public void getAllBelongingTo() {
+    public void getAllNewResults() {
     }
 
     @Test
     @SneakyThrows
-    public void updateAssignment() {
-    }
-
-    @Test
-    @SneakyThrows
-    public void deleteAssignment() {
+    public void getByStudent() {
     }
 }

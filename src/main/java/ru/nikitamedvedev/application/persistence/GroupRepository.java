@@ -9,9 +9,5 @@ import java.util.List;
 @Repository
 public interface GroupRepository extends CrudRepository<GroupDb, Long> {
 
-    List<GroupDb> findByNameIn(List<String> names);
-
     List<GroupDb> findAllBy();
-
-    List<GroupDb> findBySubjectDbsIsNotNull();
 }

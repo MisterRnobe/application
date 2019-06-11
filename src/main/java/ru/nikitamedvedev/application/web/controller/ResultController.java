@@ -6,11 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.nikitamedvedev.application.service.ResultService;
+import ru.nikitamedvedev.application.service.dto.AssignmentBinding;
+import ru.nikitamedvedev.application.service.dto.AssignmentResult;
+import ru.nikitamedvedev.application.web.dto.AssignmentToResultsResponse;
 import ru.nikitamedvedev.application.web.dto.FullAssignmentResultResponse;
+import ru.nikitamedvedev.application.web.dto.StudentResultResponse;
 import ru.nikitamedvedev.application.web.dto.UpdateResultRequest;
 
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -45,9 +49,23 @@ public class ResultController {
     }
 
     @GetMapping(path = "/get-all-by-student/{teacherLogin}/{studentLogin}")
-    public Map<String, FullAssignmentResultResponse> getByStudent(@PathVariable String teacherLogin,
-                                                                  @PathVariable String studentLogin) {
-        return resultService.getAllResultsGroupedBySubjectFor(teacherLogin, studentLogin);
+    public List<StudentResultResponse> getByStudent(@PathVariable String teacherLogin,
+                                                    @PathVariable String studentLogin) {
+        return resultService.getAllResultsGroupedBySubjectFor(teacherLogin, studentLogin).entrySet()
+                .stream()
+                .map(entry -> {
+                    String subjectName = entry.getKey();
+                    List<AssignmentToResultsResponse> assignmentToResultsResponses = entry.getValue().entrySet()
+                            .stream()
+                            .map(assignmentToResults -> {
+                                AssignmentBinding assignmentBinding = assignmentToResults.getKey();
+                                List<AssignmentResult> results = assignmentToResults.getValue();
+                                return new AssignmentToResultsResponse(assignmentBinding, results);
+                            })
+                            .collect(Collectors.toList());
+                    return new StudentResultResponse(subjectName, assignmentToResultsResponses);
+                })
+                .collect(Collectors.toList());
     }
 
 

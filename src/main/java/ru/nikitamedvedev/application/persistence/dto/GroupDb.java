@@ -19,6 +19,4 @@ public class GroupDb {
     private Long id;
     @Column(unique = true)
     private String name;
-    @ManyToMany
-    private List<SubjectDb> subjectDbs;
 }

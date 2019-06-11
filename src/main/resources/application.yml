@@ -2,7 +2,7 @@ spring:
   datasource:
     driver-class-name: org.h2.Driver
     username: sa
-    url: jdbc:h2:tcp://localhost/~/local
+    url: jdbc:h2:tcp://localhost/~/assignment
   servlet:
     multipart:
       max-file-size: 10MB

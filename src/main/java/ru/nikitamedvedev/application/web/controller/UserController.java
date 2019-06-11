@@ -3,7 +3,6 @@ package ru.nikitamedvedev.application.web.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.nikitamedvedev.application.service.Account;
 import ru.nikitamedvedev.application.service.UserService;
 import ru.nikitamedvedev.application.web.dto.CreateTeacherRequest;
 

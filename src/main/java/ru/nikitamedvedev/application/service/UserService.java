@@ -15,7 +15,7 @@ import ru.nikitamedvedev.application.persistence.dto.SubjectDb;
 import ru.nikitamedvedev.application.persistence.dto.TeacherUserDb;
 import ru.nikitamedvedev.application.hepler.PasswordGenerator;
 import ru.nikitamedvedev.application.service.converter.TeacherUserDbToTeacherUserConverter;
-import ru.nikitamedvedev.application.service.dto.StudentGrades;
+import ru.nikitamedvedev.application.service.dto.Account;
 import ru.nikitamedvedev.application.service.dto.StudentUser;
 import ru.nikitamedvedev.application.service.dto.TeacherUser;
 
@@ -36,7 +36,7 @@ public class UserService {
     private final TeacherUserDbToTeacherUserConverter converter;
 
     public List<Account> createGroupWithUsers(String groupName, Map<String, String> loginsToName) {
-        val saved = groupRepository.save(new GroupDb(null, groupName, Collections.emptyList()));
+        val saved = groupRepository.save(new GroupDb(null, groupName));
 
         List<StudentUserDb> collect = loginsToName.entrySet().stream()
                 .map(entry -> {
