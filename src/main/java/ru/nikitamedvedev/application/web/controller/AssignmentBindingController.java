@@ -34,8 +34,8 @@ public class AssignmentBindingController {
     }
 
     @GetMapping(path = "/get-all/{login}")
-    public List<AssignmentBinding> getAllBindings(@PathVariable String login){
-        log.info("Returns all assignments for {}", login);
+    public List<AssignmentBinding> getAllBindingsByCreator(@PathVariable String login){
+        log.info("Returns all assignments created by {}", login);
         return assignmentBindingService.getBindingsByCreator(login);
     }
 

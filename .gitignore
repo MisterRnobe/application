@@ -1,6 +1,5 @@
 /target/
 !.mvn/wrapper/maven-wrapper.jar
-src/main/resources/application-local.yml
 mvnw
 mvnw.cmd
 
@@ -27,3 +26,4 @@ mvnw.cmd
 /nbdist/
 /.nb-gradle/
 /build/
+src/test/java/ru/nikitamedvedev/application/core/

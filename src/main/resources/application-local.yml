@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    username: sa
+    url: jdbc:h2:tcp://localhost/~/assignment
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+  security:
+    user:
+      name: name
+      password: password
+security:
+  secret: secret

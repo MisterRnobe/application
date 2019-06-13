@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
+import ru.nikitamedvedev.application.hepler.PasswordGenerator;
 import ru.nikitamedvedev.application.persistence.GroupRepository;
 import ru.nikitamedvedev.application.persistence.StudentUserRepository;
 import ru.nikitamedvedev.application.persistence.SubjectRepository;
@@ -13,12 +14,10 @@ import ru.nikitamedvedev.application.persistence.dto.GroupDb;
 import ru.nikitamedvedev.application.persistence.dto.StudentUserDb;
 import ru.nikitamedvedev.application.persistence.dto.SubjectDb;
 import ru.nikitamedvedev.application.persistence.dto.TeacherUserDb;
-import ru.nikitamedvedev.application.hepler.PasswordGenerator;
 import ru.nikitamedvedev.application.service.converter.TeacherUserDbToTeacherUserConverter;
-import ru.nikitamedvedev.application.service.dto.Account;
-import ru.nikitamedvedev.application.service.dto.StudentUser;
-import ru.nikitamedvedev.application.service.dto.TeacherUser;
+import ru.nikitamedvedev.application.service.dto.*;
 
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,17 +30,14 @@ public class UserService {
     private final StudentUserRepository studentUserRepository;
     private final SubjectRepository subjectRepository;
     private final GroupRepository groupRepository;
-    //    private final PasswordEncoder passwordEncoder;
     private final PasswordGenerator passwordGenerator;
     private final TeacherUserDbToTeacherUserConverter converter;
 
-    public List<Account> createGroupWithUsers(String groupName, Map<String, String> loginsToName) {
+    public List<PasswordAccount> createGroupWithUsers(String groupName, Map<String, String> loginsToName) {
         val saved = groupRepository.save(new GroupDb(null, groupName));
 
         List<StudentUserDb> collect = loginsToName.entrySet().stream()
-                .map(entry -> {
-                    return new StudentUserDb(entry.getKey(), "", entry.getValue(), saved);
-                })
+                .map(entry -> new StudentUserDb(entry.getKey(), passwordGenerator.generate(10), entry.getValue(), saved))
                 .collect(Collectors.toList());
         studentUserRepository.saveAll(collect);
         return null;
@@ -78,5 +74,23 @@ public class UserService {
                 .stream()
                 .map(studentUserDb -> new StudentUser(studentUserDb.getLogin(), studentUserDb.getName()))
                 .collect(Collectors.toList());
+    }
+
+    public JwtAccount authorize(String login, String password) {
+        return studentUserRepository.findByLoginAndPassword(login, password)
+                .map(userDb -> new JwtAccount(userDb.getLogin(),
+                        userDb.getGroup().getName(),
+                        userDb.getGroup().getId(),
+                        Role.STUDENT,
+                        OffsetDateTime.now().plusDays(1)))
+                .orElseGet(() ->
+                        teacherUserRepository.findByLoginAndPassword(login, password)
+                                .map(userDb -> new JwtAccount(userDb.getLogin(),
+                                        null,
+                                        null,
+                                        Role.TEACHER,
+                                        OffsetDateTime.now().plusDays(1)))
+                                .orElse(null)
+                );
     }
 }

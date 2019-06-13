@@ -1,14 +1,14 @@
-package ru.nikitamedvedev.application.service.dto;
+package ru.nikitamedvedev.application.web.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@NoArgsConstructor
 @AllArgsConstructor
-public class Account {
+public class LoginPasswordRequest {
+
     private String login;
-    private String name;
     private String password;
 }

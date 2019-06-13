@@ -1,10 +1,16 @@
 package ru.nikitamedvedev.application.web.controller;
 
+import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.web.bind.annotation.*;
 import ru.nikitamedvedev.application.service.UserService;
+import ru.nikitamedvedev.application.service.security.JwtCoderService;
 import ru.nikitamedvedev.application.web.dto.CreateTeacherRequest;
+import ru.nikitamedvedev.application.web.dto.LoginPasswordRequest;
+
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -13,6 +19,8 @@ import ru.nikitamedvedev.application.web.dto.CreateTeacherRequest;
 public class UserController {
 
     private final UserService userService;
+    private final JwtCoderService jwtCoderService;
+
 
     @PutMapping(value = "/create-teacher")
     public void createTeacher(CreateTeacherRequest createTeacherRequest) {
@@ -20,23 +28,17 @@ public class UserController {
         userService.createTeacher(createTeacherRequest.getLogin(), createTeacherRequest.getName());
     }
 
+    @PostMapping(path = "/authorize")
+    public Map<String, Object> authorize(@RequestBody LoginPasswordRequest request) {
+        val jwtAccount = userService.authorize(request.getLogin(), request.getPassword());
+        if (jwtAccount == null) {
+            throw new IllegalStateException("Bad data!");
+        }
+        return ImmutableMap.of(
+                "token", jwtCoderService.encode(jwtAccount),
+                "data", jwtAccount
+        );
+    }
 
-//    @PostMapping(path = "/add")
-//    public ResponseEntity<Resource> addUsers(@RequestParam("userList") MultipartFile file,
-//                                             @RequestParam("name") String name) throws IOException {
-//        // TODO: 09.02.2019 Move to UserService class
-//        List<Object> parsed = objectMapper.readValue(file.getBytes(), ArrayList.class);
-//        List<String> names = parsed.stream()
-//                .map(Object::toString)
-//                .collect(Collectors.toList());
-//        List<Account> users = userService.createGroupWithUsers(name, names);
-//
-//        ByteArrayOutputStream stub = new ByteArrayOutputStream();
-//        objectMapper.writeValue(stub, users);
-//        Resource resource = new ByteArrayResource(stub.toByteArray());
-//
-//        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-//                "attachment; filename=\"" + name + ".json\"").body(resource);
-//    }
 }
 

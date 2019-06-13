@@ -1,15 +1,17 @@
 package ru.nikitamedvedev.application.config;
 
+import com.auth0.jwt.algorithms.Algorithm;
 import com.google.common.collect.ImmutableMap;
 import lombok.val;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.nikitamedvedev.application.hepler.PasswordGenerator;
 import ru.nikitamedvedev.application.service.*;
-import ru.nikitamedvedev.application.service.dto.Status;
+import ru.nikitamedvedev.application.service.dto.Role;
 
-import java.time.LocalDate;
+import java.util.Arrays;
 
 @Configuration
 public class ApplicationConfiguration {
@@ -22,6 +24,51 @@ public class ApplicationConfiguration {
                 .usePunctuation(false)
                 .useLower(true)
                 .build();
+    }
+
+    @Bean
+    public Algorithm algorithm(@Value("${security.secret}") String secret) {
+        return Algorithm.HMAC256(secret);
+    }
+
+    @Bean
+    public SecurityConfig securityConfig() {
+        return new SecurityConfig(
+                ImmutableMap.of(
+                        Role.STUDENT, Arrays.asList(
+                                "/binding/get-by-student",
+                                "/grades/get-current-grades",
+                                "/result/add-result-assignment"
+                        ),
+                        Role.TEACHER, Arrays.asList(
+                                "/assignment-binding/add",
+                                "/assignment-binding/get-all",
+                                "/assignment/create",
+                                "/assignment/get-by-creator",
+                                "/assignment/modify",
+                                "/grades/get-all",
+                                "/grades/get-by-group",
+                                "/grades/get-by-subject",
+                                "/group/get-by-teacher",
+                                "/group/get-students-by-group",
+                                "/result/get-new-results",
+                                "/result/get-all-by-student",
+                                "/result/update-status",
+                                "/subject/bind",
+                                "/subject/get-all"
+                        ),
+                        Role.ADMIN, Arrays.asList()
+                )
+                , Arrays.asList(
+                "/group/get-all",
+                "/actuator/health",
+                "/semester/get-all",
+                "/semester/get-current",
+                "/users/authorize",
+                "swagger",
+                "v2/api-docs"
+        )
+        );
     }
 
     @Bean
